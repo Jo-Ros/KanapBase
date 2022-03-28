@@ -8,8 +8,6 @@
 	display: flex;
 	justify-content: center;
 	background-color: black;
-	width: 100px;
-	height: 100px;
 }
 .item article {
 	display: flex;
