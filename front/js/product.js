@@ -1,13 +1,15 @@
 console.log('hello');
 const itemContainer = document.querySelector('.item');
-let currentId = location.search.substring(4);
-console.log(currentId);
+const pageTitle = document.querySelector('title');
+let currentProductId = location.search.substring(4);
+console.log(currentProductId);
 
-fetch(`http://localhost:3000/api/products/${currentId}`)
+fetch(`http://localhost:3000/api/products/${currentProductId}`)
     .then((res) => res.json())
     .then((data) => {
         // productData = data;
         console.log(data)
+        pageTitle.innerText = `${data.name}`
         const productInfos = document.createElement('article');
         productInfos.innerHTML = `
             <div class="item__img">
@@ -29,7 +31,6 @@ fetch(`http://localhost:3000/api/products/${currentId}`)
                 <div class="item__content__settings__color">
                 <label for="color-select">Choisir une couleur :</label>
                 <select name="color-select" id="colors">
-                    <option value=""> Select a color</option>
                     ${data.colors.map(
                         (color) => "<option value=" + color + ">" + color + "</option>"
                     )}
@@ -38,7 +39,7 @@ fetch(`http://localhost:3000/api/products/${currentId}`)
 
                 <div class="item__content__settings__quantity">
                 <label for="itemQuantity">Nombre d'article(s) (1-100) :</label>
-                <input type="number" name="itemQuantity" min="1" max="100" value="0" id="quantity">
+                <input type="number" name="itemQuantity" min="1" max="100" value="1" id="quantity">
                 </div>
             </div>
 
@@ -47,6 +48,52 @@ fetch(`http://localhost:3000/api/products/${currentId}`)
             </div>
 
             </div>`;
-
+            
             itemContainer.appendChild(productInfos);
+
+            const addToCartBtn = document.querySelector('#addToCart');
+            const colors = document.querySelector('#colors');
+            const quantity = document.querySelector('#quantity');
+
+            addToCartBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                let chosenColor = colors.value;
+                console.log(chosenColor);
+                let quantityAdded = quantity.value;
+                console.log(quantityAdded);
+
+                let chosenProduct = {
+                    name: `${data.name}`,
+                    id: `${currentProductId}`,
+                    color: chosenColor,
+                    quantity: quantityAdded
+                }
+
+                let productsInCart =  JSON.parse(localStorage.getItem("products"));
+                console.log(productsInCart);
+
+                if(productsInCart) {
+                    productsInCart.push(chosenProduct);
+                    localStorage.setItem("products", JSON.stringify(productsInCart));
+                } else {
+                    productsInCart = [];
+                    productsInCart.push(chosenProduct);
+                    localStorage.setItem("products", JSON.stringify(productsInCart));
+
+                    console.log(productsInCart);
+                }
+            })
+
+
     }) .catch((err) => alert(err))
+
+// const dataProduct = {color, quantity};
+// const postOptions = {
+//     method: 'POST',
+//     headers: {
+//         'Content-Type': 'application/json'
+//     },
+//     body: JSON.stringify(dataProduct)
+// }
+
+// fetch('/api', postOptions);
