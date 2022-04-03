@@ -87,6 +87,14 @@ function setInCart(chosenProduct) {
     let productsInCart =  JSON.parse(localStorage.getItem("products"));
 
     if(productsInCart) {
+        for(i = 0; i < productsInCart.length; i++) {
+
+            if(chosenProduct.id == productsInCart[i].id && chosenProduct.color == productsInCart[i].color) {
+                productsInCart[i].quantity = parseInt(productsInCart[i].quantity) + parseInt(chosenProduct.quantity);
+                localStorage.setItem("products", JSON.stringify(productsInCart));
+                return;
+            }
+        }
         productsInCart.push(chosenProduct);
         localStorage.setItem("products", JSON.stringify(productsInCart));
     } else {
