@@ -20,7 +20,7 @@ if(productsInCart) {
     cartTotalPrice.style.display = 'none';
     form.style.display = 'none';
 }
-console.log(productsInCart);
+
 // ===============================================================
 function showProductRow(data, object) {
     let itemPrice = data.price;
@@ -60,25 +60,50 @@ function showProductRow(data, object) {
 
     itemsContainer.appendChild(productRow);
     deleteItem(object);
+    dynamicQuantity(object);
 }
 
 // ===============================================================
 
 function deleteItem (object) {
   const deleteItem = document.querySelectorAll('.deleteItem');
+    
     deleteItem.forEach((btn) => {
+      
       btn.addEventListener('click', (e) => {
         e.stopImmediatePropagation();
         
         for(i = 0; i < productsInCart.length; i++) {
           if(productsInCart[i].id === object.id && productsInCart[i].color === object.color) {
+            
             productsInCart.splice(i, 1);
             localStorage.setItem("products", JSON.stringify(productsInCart));
-            break;
+            //break;
           }
         }
         localStorage.setItem("products", JSON.stringify(productsInCart));
         window.location.reload();
       })
     })
+}
+
+// ===============================================================
+function dynamicQuantity(object) {
+  const changeQuantity = document.querySelectorAll('.itemQuantity');
+  
+  changeQuantity.forEach((btn) => {
+   
+    btn.addEventListener('change', (e) => {
+      e.stopImmediatePropagation();
+      
+      for(i = 0; i < productsInCart.length; i++) {
+        if(productsInCart[i].id === object.id && productsInCart[i].color === object.color) {
+          
+          productsInCart[i].quantity = e.target.value;
+          localStorage.setItem("products", JSON.stringify(productsInCart));
+          window.location.reload();
+        }
+      }
+    })   
+  })
 }
