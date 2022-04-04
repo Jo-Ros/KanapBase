@@ -1,8 +1,9 @@
 console.log('hello');
 let productsInCart =  JSON.parse(localStorage.getItem("products"));
+
 const itemsContainer = document.querySelector('#cart__items');
 const title = document.querySelector('h1');
-const cartTotalPrice = document.querySelector('.cart__price');
+const cartTotalPrice = document.querySelector('#totalPrice');
 const form = document.querySelector('.cart__order__form');
 
 // ==============================================================
@@ -59,8 +60,10 @@ function showProductRow(data, object) {
           </div>`;
 
     itemsContainer.appendChild(productRow);
+    
     deleteItem(object);
     dynamicQuantity(object);
+    computeTotalPrice(totalItemPrice);
 }
 
 // ===============================================================
@@ -78,9 +81,9 @@ function deleteItem (object) {
             
             productsInCart.splice(i, 1);
             localStorage.setItem("products", JSON.stringify(productsInCart));
-            //break;
           }
         }
+        
         localStorage.setItem("products", JSON.stringify(productsInCart));
         window.location.reload();
       })
@@ -106,4 +109,21 @@ function dynamicQuantity(object) {
       }
     })   
   })
+}
+
+// ===============================================================
+let priceArray = [];
+
+function computeTotalPrice(totalItemPrice) {
+
+  for(i = 0; i < productsInCart.length; i++) {
+    priceArray.push(totalItemPrice);
+    break;
+  }
+
+  const totalPrice = priceArray.reduce((sum, value) => {
+    return sum += value;
+  }, 0);
+
+  cartTotalPrice.innerText = totalPrice;
 }
