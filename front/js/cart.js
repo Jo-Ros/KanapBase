@@ -83,7 +83,7 @@ function deleteItem (object) {
             localStorage.setItem("products", JSON.stringify(productsInCart));
           }
         }
-        
+
         localStorage.setItem("products", JSON.stringify(productsInCart));
         window.location.reload();
       })
@@ -127,3 +127,57 @@ function computeTotalPrice(totalItemPrice) {
 
   cartTotalPrice.innerText = totalPrice;
 }
+
+// ====================  <CHANTIER :p> =========================================
+const submitOrder = document.querySelector('#order');
+
+class Form {
+  constructor(firstName, lastName, address, city, email) {
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.address = address;
+    this.city = city;
+    this.email = email;
+  }
+}
+
+// Post object and array API
+// change from click to submit when regex is ready
+submitOrder.addEventListener('click', (e) => {
+  e.preventDefault();
+  
+  let newOrder = new Form(
+    document.querySelector('#firstName').value,
+    document.querySelector('#lastName').value,
+    document.querySelector('#address').value,
+    document.querySelector('#city').value,
+    document.querySelector('#email').value
+  );
+  
+  console.log(newOrder);
+  console.log(productsInCart);
+
+  //==============================================
+  // const options = {
+  //   method: 'POST',
+  //   headers: {
+  //     'Accept': 'application/json',
+  //     'Content-Type': 'application/json'
+  //   },
+  //   body: JSON.stringify(newOrder)
+  // };
+  // fetch('http://localhost:3000/api/products/order', options);
+  //('/options') ??
+
+  //===============================================
+
+  fetch("http://localhost:3000/api/products/order", {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(newOrder)
+  });
+
+})
