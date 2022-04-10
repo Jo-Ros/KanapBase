@@ -62,7 +62,7 @@ function showProductRow(data, object) {
 
     itemsContainer.appendChild(productRow);
     
-    computeTotalCartPrice(totalItemPrice);
+    computeTotalCartPrice(totalItemPrice); // Here I push totalItemPrice variable into function's parameter
     return object;
 }
 
@@ -72,7 +72,7 @@ function deleteProductOnClickEvent (object) {
   const deleteItem = document.querySelectorAll('.deleteItem');
     
     deleteItem.forEach((btn) => {
-        //console.log(btn); == Problem is here
+        //console.log(btn); == Problem lays here! Doesn't work without forEach
       
         btn.addEventListener('click', (e) => {
         e.stopImmediatePropagation();
@@ -89,11 +89,10 @@ function deleteProductOnClickEvent (object) {
         // == Reset Local Storage if empty ==
         if(productsInCart === null || productsInCart.length === 0){
             localStorage.clear();
-            window.location.reload();
+            location.reload();
         }
       })
     })
-
     return object;
 }
 
@@ -112,7 +111,7 @@ function changeProductQuantityOnChangeEvent(object) {
           
           productsInCart[i].quantity = e.target.value;
           localStorage.setItem("products", JSON.stringify(productsInCart));
-          window.location.reload();
+          location.reload();
         }
       }
     })   
@@ -139,225 +138,115 @@ function computeTotalCartPrice(totalItemPrice) {
 
 // =============================================================
 const submitOrder = document.querySelector('#order');
+
 const nameRegex = /^[a-zA-Z\-çñàéèêëïîôüù]{2,}$/;
 const addressRegex = /^[0-9a-zA-Z\s,.'-çñàéèêëïîôüù]{3,}$/;
 const emailRegex = /^[A-Za-z0-9\-\.]+@([A-Za-z0-9\-]+\.)+[A-Za-z0-9-]{2,4}$/;
 
-const firstName = document.querySelector('#firstName').value;
-const lastName = document.querySelector('#lastName').value;
-const address = document.querySelector('#address').value;
-const city = document.querySelector('#city').value;
-const email = document.querySelector('#email').value;
+const firstName = document.querySelector('#firstName');
+const lastName = document.querySelector('#lastName');
+const address = document.querySelector('#address');
+const city = document.querySelector('#city');
+const email = document.querySelector('#email');
 
+// ==================== Form Validations ====================================
 
-
-// Post object and array API
-// change from click to submit when regex is ready
-submitOrder.addEventListener('click', (e) => {
-  e.preventDefault();
-
-  const newOrder = {
-    contact: {
-      firstName,
-      lastName,
-      address,
-      city,
-      email
-    },
-    products: productsInCart
+// == FirstName validation ==
+firstName.addEventListener("input", () => {
+  if (nameRegex.test(firstName.value) === false || firstName.value === "") {
+    document.getElementById("firstNameErrorMsg").innerText = "Unvalid first name :/";
+  } else {
+    document.getElementById("firstNameErrorMsg").innerHTML = "";
   }
+});
 
-  console.log(newOrder);
+// == LastName validation == 
+lastName.addEventListener("input", () => {
+  if (nameRegex.test(lastName.value) === false || lastName.value === "") {
+    document.getElementById("lastNameErrorMsg").innerHTML = "Unvalid name :/";
+  } else {
+    document.getElementById("lastNameErrorMsg").innerHTML = "";
+  }
+});
 
-  fetch("http://localhost:3000/api/products/order", {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(newOrder)
-  })
-    // .then((res) => {return res.json()})
-    // .then((confirm) => {
-    //         window.location.href = "./confirmation.html?orderId=" + confirm.orderId;
-    //         localStorage.clear();
-    // })
-    // .catch((err) => console.log(err))
+// == Address validation == 
+address.addEventListener("input", () => {
+  if (addressRegex.test(address.value) === false || address.value === "") {
+    document.getElementById("addressErrorMsg").innerHTML = "Unvalid address :/";
+  } else {
+    document.getElementById("addressErrorMsg").innerHTML = "";
+  }
+});
 
-})
+// == City validation == 
+city.addEventListener("input", () => {
+  if (nameRegex.test(city.value) === false || city.value === "") {
+    document.getElementById("cityErrorMsg").innerHTML = "Unvalid city :/";
+  } else {
+    document.getElementById("cityErrorMsg").innerHTML = "";
+  }
+});
+
+// == email validation == 
+email.addEventListener("input", () => {
+  if (emailRegex.test(email.value) === false || email.value === "") {
+    document.getElementById("emailErrorMsg").innerHTML = "Unvalid email :/";
+  } else {
+    document.getElementById("emailErrorMsg").innerHTML = "";
+  }
+});
 
 // =============================================================
-
-// console.log('hello');
-// let productsInCart =  JSON.parse(localStorage.getItem("products"));
-
-// const itemsContainer = document.querySelector('#cart__items');
-// const title = document.querySelector('h1');
-// const cartTotalPrice = document.querySelector('#totalPrice');
-// const form = document.querySelector('.cart__order__form');
-
-//==============================================================
-// let productsInCart =  JSON.parse(localStorage.getItem("products"));
-
-// if(productsInCart) {
-//     productsInCart.forEach(object => {
-//         fetch(`http://localhost:3000/api/products/${object.id}`)
-//             .then((res) => res.json())
-//             .then((data) => showProductRow(data, object))           
-//             .then(({ data, object } ) => computeTotalPrice(data, object))
-//             .then((object) => attachDeleteEventToDeleteButton(object))
-//             .then((object) => dynamicQuantity(object))
-//             .catch((err) => alert(err))
-//     })
-// } else {
-//     title.innerText = 'Votre panier est vide';
-//     cartTotalPrice.style.display = 'none';
-//     form.style.display = 'none';
-// }
-
-// // ===============================================================
-// function showProductRow(data, object) {
-//     let itemPrice = data.price;
-//     let totalItemPrice = itemPrice * object.quantity;
-
-//     let productRow = document.createElement('article');
-//     productRow.classList.add('cart__item');
-//     productRow.setAttribute('data-id', `${object.id}`);
-//     productRow.setAttribute('data-color', `${object.color}`);
-
-//     productRow.innerHTML = `
-//           <div class="cart__item__img">
-//             <img src="${data.imageUrl}" alt="${data.altTxt}">
-//           </div>
-                      
-//           <div class="cart__item__content">
-//             <div class="cart__item__content__description">
-//               <h2>${data.name}</h2>
-//               <p>${object.color}</p>
-//               <p>Prix total: ${totalItemPrice} €</p>
-//             </div>
-                        
-//             <div class="cart__item__content__settings">
-                            
-//                 <div class="cart__item__content__settings__quantity">
-//                   <p>Qté : </p>
-//                   <input type="number" class="itemQuantity" name="itemQuantity" min="1" 
-//                     max="100" value="${object.quantity}">
-//                 </div>
-                            
-//                 <div class="cart__item__content__settings__delete">
-//                   <p class="deleteItem" data-id="${object.id}" data-color="${object.color}">Supprimer</p>
-//                 </div>
-
-//             </div>
-//           </div>`;
-
-//     itemsContainer.appendChild(productRow);
-
-//     return { data, object };
-// }
-
-// // ===============================================================
-
-// function attachDeleteEventToDeleteButton (object) {
-//     const deleteItem = document.querySelectorAll('.deleteItem');
-
-//     deleteItem.forEach((btn) => {
-
-//         btn.addEventListener('click', (e) => {
-//             e.stopImmediatePropagation();
-
-//             for(let i = 0; i < productsInCart.length; i++) {
-//                 if(productsInCart[i].id === object.id && productsInCart[i].color === object.color) {
-
-//                     productsInCart.splice(i, 1);
-//                     localStorage.setItem("products", JSON.stringify(productsInCart));
-//                 }
-//             }
-
-//             localStorage.setItem("products", JSON.stringify(productsInCart));
-//             window.location.reload();
-//         })
-//     })
-//     return object;
-// }
-
-// //const hasSameIdAndColor = productsInCart[i].id === object.id && productsInCart[i].color === object.color;
-
-// // ===============================================================
-// function dynamicQuantity(object) {
-//     const changeQuantity = document.querySelectorAll('.itemQuantity');
-
-//     changeQuantity.forEach((btn) => {
-
-//         btn.addEventListener('change', (e) => {
-//             e.stopImmediatePropagation();
-
-//             for(let i = 0; i < productsInCart.length; i++) {
-//                 if(productsInCart[i].id === object.id && productsInCart[i].color === object.color) {
-
-//                     productsInCart[i].quantity = e.target.value;
-//                     localStorage.setItem("products", JSON.stringify(productsInCart));
-//                     window.location.reload();
-//                 }
-//             }
-//         })
-//     })
-
-//     return object;
-// }
-
-// // ===============================================================
-// let priceArray = [];
-
-// function computeTotalPrice(data, object) {
-//     let itemPrice = data.price;
-//     let totalItemPrice = itemPrice * object.quantity;
-
-//     priceArray.push(totalItemPrice);
-//     const totalPrice = priceArray.reduce((sum, value) => {
-//         return sum += value;
-//     }, 0);
-
-//     cartTotalPrice.innerText = totalPrice;
-//     return object;
-// }
-
-
-// // =============================================================
-// const submitOrder = document.querySelector('#order');
-
-// // Post object and array API
-// // change from click to submit when regex is ready
-// submitOrder.addEventListener('click', (e) => {
-//   e.preventDefault();
+// Post object and array API
+submitOrder.addEventListener('click', (e) => {
+  e.preventDefault();
   
-//   const firstName = document.querySelector('#firstName').value;
-//   const lastName = document.querySelector('#lastName').value;
-//   const address = document.querySelector('#address').value;
-//   const city = document.querySelector('#city').value;
-//   const email = document.querySelector('#email').value;
+  let products = [];
+  productsInCart.forEach((item) => {
+    products.push(item.id);
+  })
 
-//   const newOrder = {
-//     contact: {
-//       firstName,
-//       lastName,
-//       address,
-//       city,
-//       email
-//     },
-//     products: productsInCart
-//   }
+  if(
+    nameRegex.test(firstName.value) === false ||
+    nameRegex.test(lastName.value) === false ||
+    nameRegex.test(city.value) === false ||
+    addressRegex.test(address.value) === false ||
+    emailRegex.test(email.value) === false) 
+    { alert("We need correct informations to go further! :)") }
+  else if(
+    firstName.value === "" ||
+    lastName.value === "" ||
+    address.value === "" ||
+    city.value === "" ||
+    email.value === "") 
+    {alert("Please fill all the necessary fields :)")}
 
-//   console.log(newOrder);
+  else {
+    const newOrder = {
+      contact: {
+        firstName: firstName.value,
+        lastName: lastName.value,
+        address: address.value,
+        city: city.value,
+        email: email.value
+      },
+      products
+    }
 
-//   fetch("http://localhost:3000/api/products/order", {
-//       method: 'POST',
-//       headers: {
-//         'Accept': 'application/json',
-//         'Content-Type': 'application/json'
-//       },
-//       body: JSON.stringify(newOrder)
-//   })
+    fetch("http://localhost:3000/api/products/order", {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(newOrder)
+    })
+        .then((res) => res.json())
+        .then((confirm) => {
+            location.href = "./confirmation.html?orderId=" + confirm.orderId;
+            localStorage.clear();
+        })
+        .catch((err) => console.log(err))
+  }  
 
-// })
+});
