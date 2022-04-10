@@ -7,6 +7,7 @@ console.log(currentProductId);
 
 // =========== Get data from API ===========
 apiCall(productUrl);
+
 function apiCall(url) {
     fetch(url)
     .then((res) => res.json())
@@ -80,6 +81,14 @@ function chooseItem(data) {
             quantity: quantityAdded
         }
         setInCart(chosenProduct);
+        
+        // == Redirection ==
+        let confirmationText = "This product has been added to your cart! :) \nWould you like to see it now?";
+        if(confirm(confirmationText) == true) {
+            location.href = "./cart.html";
+        }   else {
+            location.href = "./index.html";
+        }
     })
 }
 
@@ -87,10 +96,10 @@ function setInCart(chosenProduct) {
     let productsInCart =  JSON.parse(localStorage.getItem("products"));
 
     if(productsInCart) {
-        for(i = 0; i < productsInCart.length; i++) {
+        for(const [i, v] of productsInCart.entries()) {
 
-            if(chosenProduct.id == productsInCart[i].id && chosenProduct.color == productsInCart[i].color) {
-                productsInCart[i].quantity = parseInt(productsInCart[i].quantity) + parseInt(chosenProduct.quantity);
+            if(chosenProduct.id === v.id && chosenProduct.color === v.color) {
+                productsInCart[i].quantity = parseInt(v.quantity) + parseInt(chosenProduct.quantity);
                 localStorage.setItem("products", JSON.stringify(productsInCart));
                 return;
             }
