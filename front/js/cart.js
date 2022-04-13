@@ -1,5 +1,6 @@
 // ==============================================================
 const productsInCart =  JSON.parse(localStorage.getItem("products"));
+console.log(productsInCart);
 
 const itemsContainer = document.querySelector('#cart__items');
 const title = document.querySelector('h1');
@@ -72,7 +73,8 @@ function deleteProductOnClickEvent (object) {
   const deleteItem = document.querySelectorAll('.deleteItem');
     
     deleteItem.forEach((btn) => {
-        //console.log(btn); == Problem lays here! Doesn't work without forEach
+      //== Problem lays here! Doesn't work well even without forEach
+      console.log(btn); 
       
         btn.addEventListener('click', (e) => {
         e.stopImmediatePropagation();
@@ -104,8 +106,7 @@ function changeProductQuantityOnChangeEvent(object) {
    
     btn.addEventListener('change', (e) => {
       e.stopImmediatePropagation();
-      
-      //for (const [index, value] of myArray) {}
+  
       for(const [i, v] of productsInCart.entries()) {
         if(v.id === object.id && v.color === object.color) {
           
@@ -126,9 +127,6 @@ function computeTotalCartPrice(totalItemPrice) {
 
   priceArray.push(totalItemPrice);
 
-  console.log(priceArray);
-  console.log(productsInCart.length);
-
   const totalPrice = priceArray.reduce((sum, value) => {
     return sum += value;
   }, 0);
@@ -136,7 +134,7 @@ function computeTotalCartPrice(totalItemPrice) {
   cartTotalPrice.innerText = totalPrice;
 }
 
-// =============================================================
+// ==================== Form Validations ====================================
 const submitOrder = document.querySelector('#order');
 
 const nameRegex = /^[a-zA-Z\-çñàéèêëïîôüù]{2,}$/;
@@ -148,8 +146,6 @@ const lastName = document.querySelector('#lastName');
 const address = document.querySelector('#address');
 const city = document.querySelector('#city');
 const email = document.querySelector('#email');
-
-// ==================== Form Validations ====================================
 
 // == FirstName validation ==
 firstName.addEventListener("input", () => {
@@ -206,20 +202,21 @@ submitOrder.addEventListener('click', (e) => {
     products.push(item.id);
   })
 
-  if(
+  if(firstName.value === "" ||
+     lastName.value === "" ||
+     address.value === "" ||
+     city.value === "" ||
+     email.value === "") 
+     { alert("Please fill all the fields :)") }
+    
+  
+  else if(
     nameRegex.test(firstName.value) === false ||
     nameRegex.test(lastName.value) === false ||
     nameRegex.test(city.value) === false ||
     addressRegex.test(address.value) === false ||
     emailRegex.test(email.value) === false) 
     { alert("We need correct informations to go further! :)") }
-  else if(
-    firstName.value === "" ||
-    lastName.value === "" ||
-    address.value === "" ||
-    city.value === "" ||
-    email.value === "") 
-    {alert("Please fill all the necessary fields :)")}
 
   else {
     const newOrder = {
@@ -247,6 +244,5 @@ submitOrder.addEventListener('click', (e) => {
             localStorage.clear();
         })
         .catch((err) => console.log(err))
-  }  
-
+  }
 });
